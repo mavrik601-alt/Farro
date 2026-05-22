@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            overflow: hidden;
+            cursor: none !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+        }
+
+        /* VIDEO - FULLSCREEN */
+        #hackVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1000;
+        }
+
+        /* HACK CONTENT - HIDDEN UNTIL VIDEO ENDS */
+        .hack-content {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* DESKTOP HACK CONTENT */
+        body.desktop .desktop-content {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 20;
+        }
+
+        body.desktop .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            opacity: 0.08;
+        }
+
+        body.desktop .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,255,0,0.03) 2px,
+                rgba(0,255,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        body.desktop .warning-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 50px;
+            background: rgba(0,0,0,0.95);
+            border-bottom: 3px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            z-index: 30;
+            animation: slide 25s linear infinite;
+            box-shadow: 0 0 20px rgba(0,255,0,0.5);
+        }
+
+        body.desktop .title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: bold;
+            text-shadow: 0 0 30px #00ff00;
+            margin-bottom: 30px;
+            animation: flicker 0.15s infinite;
+            letter-spacing: 3px;
+        }
+
+        body.desktop .message {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        body.desktop .status {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            background: rgba(0,0,0,0.8);
+            padding: 15px 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            z-index: 30;
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
+        }
+
+        /* MOBILE HACK CONTENT - PERFECTLY ALIGNED */
+        body.mobile .mobile-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(255,0,0,0.1) 0%, #000 70%);
+        }
+
+        body.mobile .fake-signal {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: #ff0000;
+            z-index: 35;
+            animation: blink 0.8s infinite;
+            text-shadow: 0 0 20px #ff0000;
+        }
+
+        body.mobile .phone-title {
+            font-size: clamp(2rem, 10vw, 3.5rem);
+            font-weight: bold;
+            color: #ff0000;
+            text-shadow: 0 0 40px #ff0000;
+            margin-bottom: 25px;
+            animation: mobileShake 0.6s infinite;
+            letter-spacing: 2px;
+        }
+
+        body.mobile .phone-warning {
+            font-size: clamp(1.2rem, 4vw, 1.6rem);
+            color: #ffff00;
+            margin: 15px 0;
+            text-shadow: 0 0 20px #ffff00;
+            font-weight: bold;
+        }
+
+        body.mobile .phone-status {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            color: #00ff00;
+            margin: 12px 0;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        body.mobile .battery-hack {
+            font-size: clamp(2rem, 8vw, 4rem);
+            color: #ff0000;
+            margin: 25px 0;
+            animation: pulse 0.7s infinite;
+            text-shadow: 0 0 30px #ff0000;
+        }
+
+        body.mobile .vibration-notice {
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            color: #ff6600;
+            background: rgba(255,102,0,0.25);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: shake 0.4s infinite;
+            border: 2px solid #ff6600;
+            box-shadow: 0 0 20px rgba(255,102,0,0.5);
+            font-weight: bold;
+        }
+
+        /* SHARED ELEMENTS */
+        .music-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,255,0,0.9);
+            color: #000;
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            font-weight: bold;
+            z-index: 40;
+            animation: musicPulse 1s infinite;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 25px rgba(0,255,0,0.8);
+            display: none;
+        }
+
+        /* ANIMATIONS - PERFECT TIMING */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 30px #00ff00; }
+            50% { opacity: 0.8; text-shadow: 0 0 50px #00ff00, 0 0 10px #00ff00; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100vw); }
+        }
+
+        @keyframes mobileShake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-6px) rotate(-2deg); }
+            75% { transform: translateX(6px) rotate(2deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-4px) translateY(-2px); }
+            50% { transform: translateX(4px) translateY(2px); }
+            75% { transform: translateX(-2px) translateY(-1px); }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.2; }
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* HYPER GLITCH - ULTRA INTENSE */
+        .glitch {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 25;
+            opacity: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,0,0,0.3) 1%,
+                rgba(0,255,0,0.4) 2%,
+                rgba(0,0,255,0.3) 3%,
+                transparent 4%
+            );
+            background-size: 300% 100%;
+        }
+
+        .glitch.active {
+            opacity: 1;
+            animation: hyperGlitch 0.08s infinite;
+        }
+
+        @keyframes hyperGlitch {
+            0% { 
+                transform: translate(0) skew(0deg);
+                background-position: 0% 0%;
+            }
+            10% { 
+                transform: translate(-4px, 4px) skew(3deg);
+                background-position: 100% 0%;
+            }
+            20% { 
+                transform: translate(-4px, -4px) skew(-2deg);
+                background-position: 200% 0%;
+            }
+            30% { 
+                transform: translate(4px, 4px) skew(2deg);
+                background-position: 300% 0%;
+            }
+            40% { 
+                transform: translate(4px, -4px) skew(-3deg);
+            }
+            50% { 
+                transform: translate(-2px, 2px) skew(1deg);
+            }
+            60% { 
+                transform: translate(2px, -2px) skew(-1deg);
+            }
+            70% { 
+                transform: translate(-3px, 3px) skew(4deg);
+            }
+            80% { 
+                transform: translate(3px, -3px) skew(-4deg);
+            }
+            90% { 
+                transform: translate(1px, -1px) skew(2deg);
+            }
+            100% { 
+                transform: translate(0) skew(0deg);
+            }
+        }
+    </style>
+</head>
+<body class="desktop">
+    <!-- HACKED VIDEO (REPLACE URL) -->
+    <video id="hackVideo" 
+           src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+           muted 
+           playsinline 
+           autoplay>
+    </video>
+
+    <!-- PANIC CONTENT (AFTER VIDEO) -->
+    <div class="hack-content">
+        <!-- DESKTOP -->
+        <div class="desktop-content">
+            <canvas class="matrix-bg" id="matrix"></canvas>
+            <div class="scanlines"></div>
+            
+            <div class="title">🔴 YOU HAVE BEEN HACKED 🔴</div>
+            <div class="message">
+                <div>ACCESS LEVEL: ROOT ADMINISTRATOR</div>
+                <div style="color: #ff0000; font-weight: bold;">HACKER ID: 0xDEADBEEF</div>
+                <div>📹 Video transmission complete</div>
+                <div>⚠️ Panic protocol ACTIVATED</div>
+                <div>🔒 Device FULLY COMPROMISED</div>
+                <div>📱 Vibration: INFINITE | 🖥️ Glitch: OVERLOAD</div>
+            </div>
+            <div class="message">
+                <span id="typing"></span>
+            </div>
+            
+            <div class="status">
+                CPU: 100% | RAM: 100% | DISK: ENCRYPTED 🔒<br>
+                📶 Network: CONTROLLED | 🛡️ Firewall: DISABLED | 🔴 PANIC MODE: ∞
+            </div>
+        </div>
+
+        <!-- MOBILE -->
+        <div class="mobile-container">
+            <div class="fake-signal">📶 🔴 DEAD</div>
+            <div class="phone-title">🔴 DEVICE COMPROMISED 🔴</div>
+            <div class="phone-warning">🎥 VIDEO WATCHED - PANIC ACTIVE</div>
+            <div class="battery-hack">🔋 100% → DEAD ⚠️</div>
+            <div class="phone-status">📹 Video Protocol: COMPLETE</div>
+            <div class="phone-status">📳 Vibration: ∞ LOOP</div>
+            <div class="phone-status">🖥️ Glitch: MAXIMUM</div>
+            <div class="phone-status">🔊 Panic Sound: PLAYING</div>
+            <div class="vibration-notice">🔒 DEVICE LOCKED - PANIC PROTOCOL ACTIVE 🔒</div>
+        </div>
+
+        <!-- PANIC EFFECTS -->
+        <div class="glitch" id="glitch"></div>
+        <div class="music-indicator" id="musicIndicator">🔊 Caught You</div>
+    </div>
+
+    <script>
+        // 🔥 ULTIMATE FULLSCREEN KIOSK LOCK (NEW)
+        class FullscreenKiosk {
+            constructor() {
+                this.isLocked = false;
+                this.init();
+            }
+
+            async init() {
+                await this.forceFullscreen();
+                document.addEventListener('fullscreenchange', () => {
+                    if (!document.fullscreenElement) this.forceFullscreen();
+                });
+                document.addEventListener('webkitfullscreenchange', () => {
+                    if (!document.webkitFullscreenElement) this.forceFullscreen();
+                });
+                
+                if (this.isMobile()) this.mobileFullscreen();
+                this.blockAllEscapes();
+                setInterval(() => {
+                    if (!document.fullscreenElement && !this.isLocked) {
+                        this.forceFullscreen();
+                    }
+                }, 1000);
+            }
+
+            async forceFullscreen() {
+                try {
+                    if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        await document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        await document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.msRequestFullscreen) {
+                        await document.documentElement.msRequestFullscreen();
+                    }
+                    this.isLocked = true;
+                } catch(e) {
+                    setTimeout(() => this.forceFullscreen(), 500);
+                }
+            }
+
+            mobileFullscreen() {
+                const video = document.getElementById('hackVideo');
+                video.addEventListener('webkitbeginfullscreen', () => video.play());
+                video.addEventListener('webkitendfullscreen', () => this.forceFullscreen());
+                if (screen.orientation) {
+                    screen.orientation.lock('portrait').catch(() => {});
+                }
+            }
+
+            blockAllEscapes() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' || e.keyCode === 27 || e.key === 'F11') {
+                        e.preventDefault(); e.stopPropagation();
+                        this.forceFullscreen();
+                        return false;
+                    }
+                }, true);
+
+                document.addEventListener('contextmenu', e => {
+                    e.preventDefault();
+                    this.forceFullscreen();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && 
+                        (e.key === 'F12' || e.key === 'I' || (e.shiftKey && e.key === 'C'))) {
+                        e.preventDefault();
+                        alert('🚫 DEV TOOLS BLOCKED');
+                        this.forceFullscreen();
+                    }
+                }, true);
+            }
+
+            isMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+        }
+
+        // 🆕 FULLSCREEN KIOSK INIT
+        const kiosk = new FullscreenKiosk();
+
+        // YOUR ORIGINAL CODE (UNCHANGED)
+        const hackVideo = document.getElementById('hackVideo');
+        const hackContent = document.querySelector('.hack-content');
+        const glitchEl = document.getElementById('glitch');
+        const musicIndicator = document.getElementById('musicIndicator');
+        
+        let panicMode = false;
+        let isMobile = window.innerWidth <= 768;
+        let panicInterval, glitchInterval, batteryInterval;
+        
+        // YOUR CUSTOM URLS HERE 👇
+        hackVideo.src = 'video.mp4';
+        const panicSoundUrl = 'spider.mp3'; 
+        
+        function updateDeviceClass() {
+            isMobile = window.innerWidth <= 768;
+            document.body.className = isMobile ? 'mobile' : 'desktop';
+        }
+        
+        // PANIC SOUND
+        let panicAudio;
+        function initPanicAudio() {
+            panicAudio = new Audio(panicSoundUrl);
+            panicAudio.loop = true;
+            panicAudio.volume = 0.7;
+            panicAudio.preload = 'auto';
+        }
+        
+        function playPanicAudio() {
+            if (panicAudio) {
+                panicAudio.play().catch(() => {});
+                musicIndicator.style.display = 'block';
+            }
+        }
+        
+        // ULTRA VIBRATION
+        function panicVibrate() {
+            if (navigator.vibrate && panicMode) {
+                navigator.vibrate([150, 75, 150, 75, 300, 150, 600]);
+            }
+        }
+        
+        // HYPER GLITCH
+        function hyperGlitch() {
+            if (panicMode) {
+                glitchEl.classList.add('active');
+                setTimeout(() => glitchEl.classList.remove('active'), 250);
+            }
+        }
+        
+        // VIDEO COMPLETE → PANIC MODE
+        hackVideo.addEventListener('ended', () => {
+            console.log('🎥 VIDEO ENDED → PANIC MODE ACTIVATED');
+            
+            hackVideo.pause();
+            hackVideo.currentTime = 0;
+            hackVideo.style.display = 'none';
+            hackContent.style.display = 'block';
+            
+            panicMode = true;
+            
+            // INIT PANIC EFFECTS
+            initPanicAudio();
+            playPanicAudio();
+            
+            // VIBRATION LOOP
+            panicVibrate();
+            panicInterval = setInterval(panicVibrate, 1100);
+            
+            // GLITCH LOOP
+            glitchInterval = setInterval(hyperGlitch, 600);
+            
+            // BATTERY DRAIN
+            let battery = 100;
+            batteryInterval = setInterval(() => {
+                battery -= Math.floor(Math.random() * 4) + 2;
+                if (battery < 0) battery = 100;
+                const batEl = document.querySelector('.battery-hack');
+                if (batEl) batEl.textContent = `🔋 ${battery}% → DEAD ⚠️`;
+            }, 1400);
+            
+            // DESKTOP EFFECTS
+            if (!isMobile) {
+                initMatrix();
+                initTyping();
+            }
+        });
+        
+        // MATRIX RAIN
+        function initMatrix() {
+            const canvas = document.getElementById('matrix');
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            
+            const chars = "01アイウエオカキクケコサシシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split("");
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = panicMode ? '#ff0000' : '#00ff00';
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, panicMode ? 25 : 50);
+        }
+        
+        // TYPING EFFECT
+        function initTyping() {
+            const messages = [
+                "Panic protocol: FULLY ACTIVATED...",
+                "All security bypassed...",
+                "Vibration pattern: INFINITE...",
+                "Glitch overload: ENGAGED...",
+                "YOUR DEVICE BELONGS TO US NOW",
+                "💀 NO ESCAPE - PAY BITCOIN OR LOSE EVERYTHING 💀"
+            ];
+            let index = 0;
+            const el = document.getElementById('typing');
+            
+            function typeMsg() {
+                const msg = messages[index];
+                let i = 0;
+                el.textContent = '';
+                
+                function type() {
+                    if (i < msg.length) {
+                        el.textContent += msg[i];
+                        i++;
+                        setTimeout(type, 60 + Math.random() * 40);
+                    } else {
+                        setTimeout(() => {
+                            index = (index + 1) % messages.length;
+                            typeMsg();
+                        }, 2800);
+                    }
+                }
+                type();
+            }
+            setTimeout(typeMsg, 800);
+        }
+        
+        // TOTAL LOCKDOWN (ENHANCED)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (panicMode) e.preventDefault();
+            const blocked = ['F12', 'F5', 'Escape'];
+            if (blocked.includes(e.key) || 
+                (e.ctrlKey && e.key === 'r') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        }, true);
+        
+        ['selectstart', 'dragstart', 'pointerlockchange'].forEach(ev => {
+            document.addEventListener(ev, e => e.preventDefault());
+        });
+        
+        // STARTUP
+        window.addEventListener('load', () => {
+            updateDeviceClass();
+            hackVideo.play().catch(() => {
+                ['click', 'touchstart'].forEach(ev => {
+                    document.addEventListener(ev, () => hackVideo.play(), { once: true });
+                });
+            });
+        });
+        
+        window.addEventListener('resize', updateDeviceClass);
+        window.addEventListener('orientationchange', () => setTimeout(updateDeviceClass, 100));
+    </script>
+</body>
+</html>
