@@ -1,0 +1,166 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+  background-image: url(https://aadcdn.msftauth.net/shared/1.0/content/images/backgrounds/2_11d9e3bcdfede9ce5ce5ace2d129f1c4.svg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.box {
+  display: inline-block;
+  background-color: white;
+  position: relative;
+  padding: 44px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  min-width: 420px;
+  min-height: 190px;
+  margin-bottom: 20px;
+}
+h2 {
+  font-weight: 500;
+  margin: 15px 0;
+}
+
+input {
+  font-size: 0.9rem;
+  padding-bottom: 7px;
+  margin-bottom: 5px;
+  width: 100%;
+  border: 0;
+  height: 30px;
+  border-bottom: 1px solid black;
+}
+
+input:focus {
+  outline: none;
+}
+p {
+  color: #645e5e;
+  padding: 15px 0;
+}
+a {
+  text-decoration: none;
+}
+
+.access,
+.create {
+  color: #0067b8;
+}
+.access:hover,
+.create:hover {
+  text-decoration: underline;
+  color: #073253;
+}
+
+.text {
+  font-size: 0.8rem;
+  padding: 0 0 10px 0;
+}
+
+.buttons {
+  float: right;
+  padding-top: 30px;
+}
+
+button {
+  padding: 5px 12px 5px 12px;
+  font-size: 0.98rem;
+  min-width: 100px;
+  border: 0;
+  cursor: pointer;
+}
+
+button:active {
+  border: 0.5px solid black;
+  /* border-color: black; */
+}
+
+.back {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.back:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.next {
+  color: white;
+  background-color: #0067b8;
+}
+.next:hover {
+  background-color: #055da0;
+}
+.options {
+  display: flex;
+  width: 100%;
+  background-color: #fff;
+  padding: 10px 44px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  align-items: center;
+}
+
+.options:focus {
+  outline: #000 dashed 1px;
+}
+.key {
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+h3 {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 0.94rem;
+  padding: 0 10px;
+}
+
+.footer {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-size: 0.8rem;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.terms:hover,
+.cookies:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px), (max-height: 366px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .box,
+  .options {
+    min-width: 100%;
+  }
+}

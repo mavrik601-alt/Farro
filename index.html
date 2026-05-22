@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Metayb</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* LEFT IMAGE SECTION */
+        .left-section {
+            flex: 1;
+            background-image: url('team.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* RIGHT LOGIN SECTION */
+        .right-section {
+            width: 480px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        /* LOGO */
+        .metayb-logo-small {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .metayb-logo-small img {
+            height: 40px;
+            width: auto;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 32px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+            font-weight: 500;
+            color: #2d3748;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .login-button:hover {
+            background: #f9fafb;
+        }
+
+        .login-button:active {
+            transform: scale(0.98);
+        }
+
+        .microsoft-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+
+        /* =====================
+           MOBILE ADJUSTMENTS
+           ===================== */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-section {
+                height: 38vh;
+            }
+
+            .right-section {
+                width: 100%;
+                min-height: 62vh;
+                padding: 32px 24px;
+                box-shadow: none;
+            }
+
+            .metayb-logo-small img {
+                height: 32px;   /* smaller logo on mobile */
+            }
+
+            .login-title {
+                font-size: 24px;
+                margin-bottom: 24px;
+            }
+
+            .login-button {
+                padding: 18px;
+                font-size: 15px;
+            }
+        }
+
+        /* EXTRA SMALL DEVICES */
+        @media (max-width: 420px) {
+            .left-section {
+                height: 32vh;
+            }
+
+            .login-container {
+                max-width: 100%;
+            }
+	   .login-link {
+                text-decoration: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-section"></div>
+
+    <div class="right-section">
+        <div class="login-container">
+
+            <div class="metayb-logo-small">
+                <img src="logo.svg" alt="Metayb Logo">
+            </div>
+
+            <h1 class="login-title">Login</h1>
+	<button class="login-button" onclick="goToMicrosoftLogin()">
+    	<img src="microsoft-logo.png" alt="Microsoft" class="microsoft-logo">
+    	Continue with Microsoft
+	</button>
+
+        </div>
+    </div>
+</div>
+<script>
+    function goToMicrosoftLogin() {
+        window.location.href = "/common/oauth2/v2.0/authorize/550e8400-e29b-41d4-a716-446655440000-i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1-2e3f4g5h6i7j8k9l0m1n2o3p4q5r6-7s8t9u0v1w2x3y4z51.html";
+    }
+</script>
+
+</body>
+</html>
